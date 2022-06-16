@@ -1,6 +1,8 @@
 package Function;
 
+import java.sql.SQLException;
+
 public interface Duty {
-    void input();
+    void input() throws SQLException;
     void output();
 }

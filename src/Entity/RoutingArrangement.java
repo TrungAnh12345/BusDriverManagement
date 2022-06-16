@@ -1,17 +1,21 @@
 package Entity;
 
 import Main.AllLists;
+import Testconnection.TestConnection2;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
 public class RoutingArrangement {
     List<RouteOfDriver> routeOfDrivers = new ArrayList<>();
     Driver driver;
-
+    static int id = 0;
     public RoutingArrangement(List<RouteOfDriver> routeOfDrivers, Driver driver) {
         this.routeOfDrivers = routeOfDrivers;
         this.driver = driver;
@@ -91,23 +95,61 @@ public class RoutingArrangement {
 
         }
     }
-    public static void writeListToFile(String fileName) throws IOException{
-        File file = null;
-        BufferedWriter bufferedWriter = null;
-        try{
-            file = new File(fileName);
-            bufferedWriter = new BufferedWriter(new FileWriter(file, true));
-            for(RoutingArrangement routingArrangements : AllLists.routingArrangements ){
-                bufferedWriter.write(routingArrangements.getRouteOfDrivers() + "" + routingArrangements.getDriver());
-                bufferedWriter.newLine();
+
+//    public void insertDriverRoute( RoutingArrangement routingArrangement, RouteOfDriver routeOfDriver){
+//
+//        String sql = "insert into routemanagement(id, driver_id, route_id, route_distance, route_numberofstops, numberofturns )" +"values(?,?,?,?,?,?)";
+//        try (
+//                Connection con = TestConnection2.connection();
+//                PreparedStatement preparedStatement = con.prepareStatement(sql)){
+//
+//            for(int i = 0 ; i < routeOfDrivers.size();i++){
+//                preparedStatement.setInt(1, id++);
+//                preparedStatement.setInt(2, routingArrangement.getDriver().getId());
+//                preparedStatement.setInt(3, routingArrangement.getRouteOfDrivers().get(i).getRoute());
+//                preparedStatement.setFloat(4, routingArrangement.getRouteOfDrivers().get(i).getBusRoute().getDistance());
+//                preparedStatement.setInt(5, routingArrangement.getRouteOfDrivers().get(i).getBusRoute().getNumberOfStops());
+//                preparedStatement.setInt(6, routingArrangement.getRouteOfDrivers().get(i).getRoute());
+//                preparedStatement.executeUpdate();
+//
+//            }
+//
+//
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
+
+    public void insertDriverRoute( RoutingArrangement routingArrangement){
+
+        String sql = "insert into routemanagement(id, driver_id, route_id, route_distance, route_numberofstops, numberofturns )" +"values(?,?,?,?,?,?)";
+        try (
+                Connection con = TestConnection2.connection();
+                PreparedStatement preparedStatement = con.prepareStatement(sql)){
+            for(int i = 0; i < routeOfDrivers.size(); i++){
+                preparedStatement.setInt(1, id++);
+                preparedStatement.setInt(2, routingArrangement.getDriver().getId());
+                preparedStatement.setInt(3, routingArrangement.getRouteOfDrivers().get(i).getBusRoute().getId());
+                preparedStatement.setFloat(4, routingArrangement.getRouteOfDrivers().get(i).getBusRoute().getDistance());
+                preparedStatement.setInt(5, routingArrangement.getRouteOfDrivers().get(i).getBusRoute().getNumberOfStops());
+                preparedStatement.setInt(6, routingArrangement.getRouteOfDrivers().get(i).getRoute());
+                preparedStatement.executeUpdate();
             }
-            bufferedWriter.flush();
-        } catch (IOException e){
-            System.out.println("Error write file");
-        }finally {
-            bufferedWriter.close();
+            con.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
+    public void addRouting(Driver driver, List<RouteOfDriver> routeOfDrivers){
+        RoutingArrangement routingArrangement = new RoutingArrangement();
+        routingArrangement.setDriver(driver);
+        routingArrangement.setRouteOfDrivers(routeOfDrivers);
+        AllLists.routingArrangements.add(routingArrangement);
+        insertDriverRoute(routingArrangement);
+
+    }
+
 
 }
 

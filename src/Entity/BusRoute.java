@@ -4,6 +4,10 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class BusRoute {
+    private int id;
+    private static int AUTO_ID = 100;
+    private float distance;
+    private int numberOfStops;
     public static int getAutoId() {
         return AUTO_ID;
     }
@@ -21,11 +25,11 @@ public class BusRoute {
         AUTO_ID = autoId;
     }
 
-    public double getDistance() {
+    public float getDistance() {
         return distance;
     }
 
-    public void setDistance(double distance) {
+    public void setDistance(float distance) {
         this.distance = distance;
     }
 
@@ -45,29 +49,27 @@ public class BusRoute {
         this.id = id;
     }
 
-    private static int AUTO_ID = 100;
-    private double distance;
-    private int numberOfStops;
 
     public BusRoute() {
+        this.id = AUTO_ID++;
+
     }
 
-    public BusRoute(double distance, int numberOfStops, int id) {
+    public BusRoute(float distance, int numberOfStops, int id) {
         this.distance = distance;
         this.numberOfStops = numberOfStops;
         this.id = id;
     }
 
-    private int id;
+
     public void inputInfo(){
-        this.id = AUTO_ID++;
         System.out.println("Nhập khoảng cách");
         this.distance = 0;
         boolean check2 = false;
         while (!check2) {
 
             try {
-                distance = new Scanner(System.in).nextDouble();
+                distance = new Scanner(System.in).nextFloat();
                 if (distance > 0) {
                     break;
                 }

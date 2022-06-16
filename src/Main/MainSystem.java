@@ -4,18 +4,16 @@ import Entity.BusRoute;
 import Entity.Driver;
 import Entity.RouteOfDriver;
 import Entity.RoutingArrangement;
-import File.InitializeData;
 import Service.DriverService;
 import Service.RouteBusService;
 import Service.RoutingService;
 import com.sun.org.apache.bcel.internal.generic.DREM;
 
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class MainSystem {
-    public static InitializeData initializeData  = new InitializeData();
-
     public static void main(String[] args) {
 
 
@@ -36,6 +34,7 @@ public class MainSystem {
             System.out.println("7: Sắp xếp theo tuyến trong ngày");
             System.out.println("8: Tính tổng khoảng cách chạy xe trong ngày");
             System.out.println("10: Thoát");
+
             int choice = 0;
             boolean check2 = false;
             while (!check2) {
@@ -54,16 +53,28 @@ public class MainSystem {
                 //0985445471
 
                 case 1:
-                    driverService.input();
+                    try {
+                        driverService.input();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    driverService.insertDatabase();
 
                     System.out.println("Nhập thành công");
                     break;
                 case 2:
                     driverService.output();
                     break;
-                case 3:   routeBusService.input();
+                case 3: BusRoute busRoute = new BusRoute();
+                    try {
+                        routeBusService.input();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+
                     break;
                 case 4:   routeBusService.output();
+
                     break;
                 case 5:
                     routingService.createRoute();
@@ -74,7 +85,7 @@ public class MainSystem {
                     break;
                 //0222222222
                 case 7:
-
+                    routingService.sortByRouteNumber();
                     break;
                 case 8:
                     routingService.showTotalDistance();

@@ -5,7 +5,11 @@ import Entity.Driver;
 import Entity.RouteOfDriver;
 import Entity.RoutingArrangement;
 import Main.AllLists;
+import Testconnection.TestConnection2;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
 // trước khi phân công chạy xe phải nhập vào thông tin lái xe và tuyến xe,
@@ -44,7 +48,8 @@ public class RoutingService {
             addRoute(routeOfDrivers);
             RoutingArrangement routingArrangement = new RoutingArrangement(routeOfDrivers, driver);
             AllLists.routingArrangements.add(routingArrangement);
-
+            RoutingArrangement routingArrangement1 = new RoutingArrangement();
+            routingArrangement1.addRouting(driver, routeOfDrivers);
         }
     }
 
@@ -67,7 +72,6 @@ public class RoutingService {
             totalDistance += busRoute.getDistance() * numberTurn;
             RouteOfDriver routeOfDriver = new RouteOfDriver(busRoute, numberTurn);
             routeOfDrivers.add(routeOfDriver);
-            System.out.println("tính tổng khoảng cách");
         }
         totalDistance += totalDistance * numberRoute;
 
@@ -210,13 +214,30 @@ public class RoutingService {
             @Override
             public int compare(RoutingArrangement o1, RoutingArrangement o2) {
                 if(o1.getDriver().getFullName().compareTo(o2.getDriver().getFullName()) > 0){
-                    return 1;
+                    return 0;
                 }
-                return 0;
+                return 1;
             }
         };
         showRoutingDaily();
     }
+    public void sortByRouteNumber(){
+        Comparator<RoutingArrangement> com2 = new Comparator<RoutingArrangement>() {
+            @Override
+            public int compare(RoutingArrangement o1, RoutingArrangement o2) {
+                if(getTotalRoute(o1.getDriver()) > getTotalRoute(o2.getDriver())){
+                    return 1;
+                }
+                return -1;
+            }
+        };
+        for (RoutingArrangement routingArrangement:
+             AllLists.routingArrangements) {
+            System.out.println(routingArrangement);
+        }
+    }
+
+
 
 
 
